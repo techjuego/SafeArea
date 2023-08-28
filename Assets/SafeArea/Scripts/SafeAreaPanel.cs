@@ -4,40 +4,37 @@ using UnityEngine;
 [RequireComponent(typeof(RectTransform))]
 public class SafeAreaPanel : MonoBehaviour
 {
-    [SerializeField]
-    private ScreenOrientation lastScreenOrientation = ScreenOrientation.Portrait;
     private RectTransform rectTransform;
     private void OnEnable()
     {
         rectTransform = GetComponent<RectTransform>();
-        SetProtrait(Screen.orientation);
+        SetProtrait();
     }
-    public string screenOrientation;
+    private string screenOrientation;
     private void Update()
     {
-        screenOrientation = Screen.orientation.ToString();
         if (rectTransform != null)
         {
             if (Screen.width > Screen.height)
             {
-                if (lastScreenOrientation != Screen.orientation)
+                if (screenOrientation != Screen.orientation.ToString())
                 {
-                    lastScreenOrientation = Screen.orientation;
-                    SeLandscape(Screen.orientation);
+                    screenOrientation = Screen.orientation.ToString();
+                    SeLandscape();
                 }
             }
             else
             {
 
-                if (lastScreenOrientation != Screen.orientation)
+                if (screenOrientation != Screen.orientation.ToString())
                 {
-                    lastScreenOrientation = Screen.orientation;
-                    SetProtrait(Screen.orientation);
+                    screenOrientation = Screen.orientation.ToString();
+                    SetProtrait();
                 }
             }
         }
     }
-    void SetProtrait(ScreenOrientation orientation)
+    void SetProtrait()
     {
         if(screenOrientation == "PortraitUpsideDown")
         {
@@ -47,14 +44,14 @@ public class SafeAreaPanel : MonoBehaviour
         }
         if (screenOrientation == "Portrait")
         {
-            rectTransform.sizeDelta = new Vector2(0, -Screen.safeArea.y);
-            rectTransform.anchoredPosition = new Vector2(0, -Screen.safeArea.y / 2);
+            rectTransform.sizeDelta = new Vector2(0, -Screen.safeArea.yMin + (Screen.safeArea.height - Screen.safeArea.yMax));
+            rectTransform.anchoredPosition = new Vector2(0, 0);
             rectTransform.pivot = new Vector2(0.5f, 0.5f);
         }
     }
 
 
-    void SeLandscape(ScreenOrientation orientation)
+    void SeLandscape()
     {
         float heightDifference = 0;
         if (screenOrientation == "LandscapeLeft")
