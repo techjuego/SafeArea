@@ -10,57 +10,66 @@ public class SafeAreaPanel : MonoBehaviour
     private void OnEnable()
     {
         rectTransform = GetComponent<RectTransform>();
-        CheckOrientation();
-        SetSafeArea(Screen.orientation);
+        SetProtrait(Screen.orientation);
     }
+    public string screenOrientation;
     private void Update()
     {
+        screenOrientation = Screen.orientation.ToString();
         if (rectTransform != null)
         {
-            CheckOrientation();
+            if (Screen.width > Screen.height)
+            {
+                if (lastScreenOrientation != Screen.orientation)
+                {
+                    lastScreenOrientation = Screen.orientation;
+                    SeLandscape(Screen.orientation);
+                }
+            }
+            else
+            {
+
+                if (lastScreenOrientation != Screen.orientation)
+                {
+                    lastScreenOrientation = Screen.orientation;
+                    SetProtrait(Screen.orientation);
+                }
+            }
         }
     }
-    void CheckOrientation()
+    void SetProtrait(ScreenOrientation orientation)
     {
-        if (lastScreenOrientation != Screen.orientation)
+        if(screenOrientation == "PortraitUpsideDown")
         {
-            lastScreenOrientation = Screen.orientation;
-            SetSafeArea(Screen.orientation);
+            rectTransform.sizeDelta = new Vector2(0, -Screen.safeArea.yMin + (Screen.safeArea.height - Screen.safeArea.yMax));
+            rectTransform.anchoredPosition = new Vector2(0, 0);
+            rectTransform.pivot = new Vector2(0.5f, 0.5f);
+        }
+        if (screenOrientation == "Portrait")
+        {
+            rectTransform.sizeDelta = new Vector2(0, -Screen.safeArea.y);
+            rectTransform.anchoredPosition = new Vector2(0, -Screen.safeArea.y / 2);
+            rectTransform.pivot = new Vector2(0.5f, 0.5f);
         }
     }
 
-  
-    void SetSafeArea(ScreenOrientation orientation)
+
+    void SeLandscape(ScreenOrientation orientation)
     {
         float heightDifference = 0;
-        switch (orientation)
+        if (screenOrientation == "LandscapeLeft")
         {
-            case ScreenOrientation.Portrait:
-                Debug.Log("1" + orientation);
-                rectTransform.sizeDelta = new Vector2(0, -Screen.safeArea.yMin + (Screen.safeArea.height - Screen.safeArea.yMax));
-                rectTransform.anchoredPosition = new Vector2(0, 0);
-                rectTransform.pivot = new Vector2(0.5f, 0.5f);
-                break;
-            case ScreenOrientation.PortraitUpsideDown:
-                Debug.Log("2" + orientation);
-                rectTransform.sizeDelta = new Vector2(0, -Screen.safeArea.y);
-                rectTransform.anchoredPosition = new Vector2(0, -Screen.safeArea.y / 2);
-                rectTransform.pivot = new Vector2(0.5f, 0.5f);
-                break;
-            case ScreenOrientation.LandscapeLeft:
-                Debug.Log("3" + orientation);
-                heightDifference = (Screen.safeArea.height - Screen.safeArea.yMax);
-                rectTransform.sizeDelta = new Vector2(-Screen.safeArea.xMin + (Screen.safeArea.width - Screen.safeArea.xMax), heightDifference);
-                rectTransform.pivot = new Vector2(0.5f, heightDifference !=0? 1:0.5f);
-                rectTransform.anchoredPosition = new Vector2(0, 0);
-                break;
-            case ScreenOrientation.LandscapeRight:
-                Debug.Log("4" + orientation);
-                heightDifference = (Screen.safeArea.height - Screen.safeArea.yMax);
-                rectTransform.sizeDelta = new Vector2(-Screen.safeArea.xMin + (Screen.safeArea.width - Screen.safeArea.xMax), heightDifference);
-                rectTransform.pivot = new Vector2(0.5f, heightDifference != 0 ? 1 : 0.5f);
-                rectTransform.anchoredPosition = new Vector2(0, 0);
-                break;
+            heightDifference = (Screen.safeArea.height - Screen.safeArea.yMax);
+            rectTransform.sizeDelta = new Vector2(-Screen.safeArea.xMin + (Screen.safeArea.width - Screen.safeArea.xMax), heightDifference);
+            rectTransform.pivot = new Vector2(0.5f, heightDifference != 0 ? 1 : 0.5f);
+            rectTransform.anchoredPosition = new Vector2(0, 0);
+        }
+        if (screenOrientation == "LandscapeRight")
+        {
+            heightDifference = (Screen.safeArea.height - Screen.safeArea.yMax);
+            rectTransform.sizeDelta = new Vector2(-Screen.safeArea.xMin + (Screen.safeArea.width - Screen.safeArea.xMax), heightDifference);
+            rectTransform.pivot = new Vector2(0.5f, heightDifference != 0 ? 1 : 0.5f);
+            rectTransform.anchoredPosition = new Vector2(0, 0);
         }
     }
 }
